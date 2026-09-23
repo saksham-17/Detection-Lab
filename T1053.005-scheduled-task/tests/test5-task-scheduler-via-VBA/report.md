@@ -8,7 +8,7 @@ This test demonstrates abuse of Windows Task Scheduler through VBA and the Windo
 
 ## Detection Queries & Evidence
 
-1. Event ID 7: Sysmon schtasks Command Execution
+1. Event ID 7: Sysmon taskschd dll loaded
 ```spl
   index=main 
   source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
@@ -18,7 +18,7 @@ This test demonstrates abuse of Windows Task Scheduler through VBA and the Windo
   | table _time host User ImageLoaded ProcessId ProcessGuid Image Signed Signature SignatureStatus 
   | sort _time
 ```
-  ![Event ID 1: Sysmon schtasks Command Execution](./artifacts/sysmon_7_suspicious_dll_loaded.png)
+  ![Event ID 1: Sysmon taskschd dll loaded](./artifacts/sysmon_7_suspicious_dll_loaded.png)
 
 
 2. Event ID 22: Suspicious DNS query
