@@ -22,3 +22,4 @@ Each technique has its own folder: `T####-technique-name/`
 | Technique | Tactic |
 |-----------|--------|
 | [T1053.005 – Scheduled Task/Job](T1053.005-scheduled-task/) | Persistence |
+| [T1003.001 – OS Credential Dumping](T1003.001-os-credential-dumping/) | Credential access |
