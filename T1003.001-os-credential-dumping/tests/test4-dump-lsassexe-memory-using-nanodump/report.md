@@ -1,0 +1,48 @@
+# Dump LSASS.exe Memory using NanoDump
+
+**MITRE ATT&CK**: T1003.001 – OS Credential Dumping | Tactic: Credential access
+
+## Intro
+This test uses NanoDump to dump the memory of lsass.exe. NanoDump uses direct system calls and an invalid dump signature to make the resulting dump less recognizable to security tooling. The Atomic Red Team test writes the output to %TEMP%\nanodump.dmp and requires administrative privileges.
+
+## Detection Queries & Evidence
+
+1. Event ID 1: Sysmon nanodump process Execution
+```spl
+  index=main
+  source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
+  EventCode=1
+  (process_name="*nanodump*" OR process_path="*nanodump*")
+  | table _time EventCode host user process_name process_path process_id process parent_process_name parent_process_path parent_process_id parent_process
+  | sort - _time
+```
+  ![Event ID 1: Sysmon Nanodump process Execution](./artifacts/suspicious_process_creation.png)
+
+
+2. Event ID 10: LSASS.exe process accessed
+```spl
+  index=main
+  source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
+  EventCode=10
+  TargetImage="*\\lsass.exe"
+  | table _time EventCode host SourceImage SourceProcessId TargetImage TargetProcessId GrantedAccess TargetUser
+  | sort - _time
+```
+  ![Event ID 10: LSASS.exe process accessed](./artifacts/lsass_process_accessed.png)
+
+
+3. Event ID 11: LSASS dmp file created
+```spl
+  index=main
+  source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
+  EventCode=11
+  TargetFilename="*.dmp"
+  | table _time host user Image ProcessId TargetFilename
+  | sort - _time
+```
+![Event ID 13: LSASS dmp file created](./artifacts/lsass_dmp_file_created.png)
+
+
+## References
+- MITRE ATT&CK: https://attack.mitre.org/tactics/TA0006/
+- Atomic Red Team: https://www.atomicredteam.io/docs/atomics/T1003.001#atomic-test-4-dump-lsassexe-memory-using-nanodump
