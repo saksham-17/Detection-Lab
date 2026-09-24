@@ -12,8 +12,8 @@ This test demonstrates modification of an already registered Windows scheduled t
 ```spl
   index=main
   EventCode=1
-  process_name="schtasks.exe"
-  process="*/create*"
+  process_name="powershell.exe"
+  (process="*Register-ScheduledTask*" OR process="*Set-ScheduledTask*")
   | table _time host user process_name process_path process_id process parent_process_name parent_process_path parent_process_id process_guid
   | sort - _time
 ```
@@ -41,6 +41,17 @@ This test demonstrates modification of an already registered Windows scheduled t
   | sort - _time
 ```
   ![Event ID 4698: Windows Scheduled Task Created](./artifacts/4698_scheduled_task_created.png)
+
+
+4. Event ID 4702: Windows Scheduled Task Modified
+```spl
+  index=main
+  source="WinEventLog:Security"
+  EventCode=4702
+  | table _time EventCode host user Task_Name TaskNewContent ClientProcessId ParentProcessId
+  | sort - _time
+```
+  ![Event ID 4698: Windows Scheduled Task Modified](./artifacts/4702_scheduled_task_modified.png)
 
 ## References
 - MITRE ATT&CK: https://attack.mitre.org/techniques/T1053/005/
