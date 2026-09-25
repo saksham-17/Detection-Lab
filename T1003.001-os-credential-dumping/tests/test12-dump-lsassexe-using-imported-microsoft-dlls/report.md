@@ -1,22 +1,22 @@
-# Dump LSASS.exe Memory using comsvcs.dll
+# Dump LSASS.exe using Imported Microsoft DLLs
 
 **MITRE ATT&CK**: T1003.001 – OS Credential Dumping | Tactic: Credential access
 
 ## Intro
-This test simulates LSASS credential dumping using the built-in Windows comsvcs.dll through rundll32.exe. It calls the MiniDump function to create a memory dump of lsass.exe, avoiding the use of a dedicated dumping tool such as ProcDump.
+This test uses Xordump to dump the memory of the lsass.exe process. Xordump imports legitimate Microsoft DLLs and uses their exported functions to access LSASS memory and create a temporary memory dump. The dump is then read and deleted.
 
 ## Detection Queries & Evidence
 
-1. Event ID 1: Sysmon suspicious process Execution
+1. Event ID 1: Sysmon xordump process Execution
 ```spl
   index=main
   source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
   EventCode=1
-  (process="*comsvcs.dll*" AND process="*MiniDump*")
-  | table _time EventCode host user process_name process_path process_id process parent_process_name parent_process_id
+  process_name="xordump.exe"
+  | table _time EventCode user process_name process_path process_id parent_process_name parent_process_path process
   | sort - _time
 ```
-  ![Event ID 1: Sysmon suspicious process Execution](./artifacts/suspicious_process_creation.png)
+  ![Event ID 1: Sysmon xordump process Execution](./artifacts/suspicious_process_creation.png)
 
 
 2. Event ID 10: LSASS.exe process accessed
@@ -37,7 +37,7 @@ This test simulates LSASS credential dumping using the built-in Windows comsvcs.
   source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
   EventCode=11
   TargetFilename="*.dmp"
-  | table _time host user Image ProcessId TargetFilename
+  | table _time EventCode host user Image ProcessId TargetFilename
   | sort - _time
 ```
 ![Event ID 11: LSASS dmp file created](./artifacts/lsass_dmp_file_created.png)
@@ -45,4 +45,4 @@ This test simulates LSASS credential dumping using the built-in Windows comsvcs.
 
 ## References
 - MITRE ATT&CK: https://attack.mitre.org/tactics/TA0006/
-- Atomic Red Team: https://www.atomicredteam.io/docs/atomics/T1003.001#atomic-test-2-dump-lsassexe-memory-using-comsvcsdll
+- Atomic Red Team: https://www.atomicredteam.io/docs/atomics/T1003.001#atomic-test-12-dump-lsassexe-using-imported-microsoft-dlls

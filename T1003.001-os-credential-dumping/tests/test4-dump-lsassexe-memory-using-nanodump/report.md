@@ -40,7 +40,7 @@ This test uses NanoDump to dump the memory of lsass.exe. NanoDump uses direct sy
   | table _time host user Image ProcessId TargetFilename
   | sort - _time
 ```
-![Event ID 13: LSASS dmp file created](./artifacts/lsass_dmp_file_created.png)
+![Event ID 11: LSASS dmp file created](./artifacts/lsass_dmp_file_created.png)
 
 
 ## References

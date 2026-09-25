@@ -1,22 +1,22 @@
-# Dump LSASS.exe Memory using comsvcs.dll
+# Dump LSASS with createdump.exe from .NET 5
 
 **MITRE ATT&CK**: T1003.001 – OS Credential Dumping | Tactic: Credential access
 
 ## Intro
-This test simulates LSASS credential dumping using the built-in Windows comsvcs.dll through rundll32.exe. It calls the MiniDump function to create a memory dump of lsass.exe, avoiding the use of a dedicated dumping tool such as ProcDump.
+This test uses the .NET 5 createdump.exe utility to create a memory dump of the live lsass.exe process. The Atomic Red Team test finds createdump.exe under the installed .NET 5 runtime, gets the LSASS PID, and writes the dump to: %TEMP%\dotnet-lsass.dmp
 
 ## Detection Queries & Evidence
 
-1. Event ID 1: Sysmon suspicious process Execution
+1. Event ID 1: Sysmon createdump process Execution
 ```spl
   index=main
   source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"
   EventCode=1
-  (process="*comsvcs.dll*" AND process="*MiniDump*")
-  | table _time EventCode host user process_name process_path process_id process parent_process_name parent_process_id
+  process_name="createdump.exe"
+  | table _time EventCode host user process_name process_path process_id process parent_process_name parent_process_path parent_process_id parent_process
   | sort - _time
 ```
-  ![Event ID 1: Sysmon suspicious process Execution](./artifacts/suspicious_process_creation.png)
+  ![Event ID 1: Sysmon Createdump process Execution](./artifacts/suspicious_process_creation.png)
 
 
 2. Event ID 10: LSASS.exe process accessed
@@ -45,4 +45,4 @@ This test simulates LSASS credential dumping using the built-in Windows comsvcs.
 
 ## References
 - MITRE ATT&CK: https://attack.mitre.org/tactics/TA0006/
-- Atomic Red Team: https://www.atomicredteam.io/docs/atomics/T1003.001#atomic-test-2-dump-lsassexe-memory-using-comsvcsdll
+- Atomic Red Team: https://www.atomicredteam.io/docs/atomics/T1003.001#atomic-test-11-dump-lsass-with-createdumpexe-from-net-v5

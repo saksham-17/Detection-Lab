@@ -40,7 +40,7 @@ This test uses Dumpert to dump the memory of lsass.exe while attempting to evade
   | table _time host user Image ProcessId TargetFilename
   | sort - _time
 ```
-![Event ID 13: LSASS dmp file created](./artifacts/lsass_dmp_file_created.png)
+![Event ID 11: LSASS dmp file created](./artifacts/lsass_dmp_file_created.png)
 
 
 ## References
