@@ -1,0 +1,25 @@
+title: Scheduled Task Created
+id: 93c298cd-842c-4899-b59b-3639f5d6668d
+status: experimental
+description: |
+    Detects the creation of a new scheduled task via Windows Security
+    auditing (Event ID 4698). 
+references:
+    - https://attack.mitre.org/techniques/T1053/005/
+    - https://www.atomicredteam.io/docs/atomics/T1053.005
+author: Saksham Bhattarai
+date: 2026-09-25
+tags:
+    - attack.persistence
+    - attack.privilege_escalation
+    - attack.t1053.005
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4698
+    condition: selection
+falsepositives:
+    - Legitimate software installation and administrative task scheduling (very common; expect high volume without additional filtering)
+level: low

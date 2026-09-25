@@ -1,0 +1,25 @@
+title: Registry Modification Under Scheduled Tasks TaskCache
+id: 1b2d41e7-f854-48f1-9752-e095d54efa78
+status: experimental
+description: |
+    Detects registry value set/modify events under the Task Scheduler's
+    TaskCache key, which stores metadata for registered scheduled tasks.
+references:
+    - https://attack.mitre.org/techniques/T1053/005/
+    - https://www.atomicredteam.io/docs/atomics/T1053.005
+author: Saksham Bhattarai
+date: 2026-09-25
+tags:
+    - attack.persistence
+    - attack.t1053.005
+logsource:
+    category: registry_event
+    product: windows
+detection:
+    selection:
+        EventType: 'SetValue'
+        TargetObject|contains: 'SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\'
+    condition: selection
+falsepositives:
+    - Normal scheduled task creation/modification via schtasks.exe, Task Scheduler GUI, or legitimate software installers
+level: medium

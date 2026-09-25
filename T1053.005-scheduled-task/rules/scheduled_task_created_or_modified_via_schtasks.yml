@@ -1,0 +1,29 @@
+
+title: Scheduled Task Created or Modified via Schtasks
+id: dbbefe57-419c-437d-8759-b121943da6e6
+status: experimental
+description: Detects the use of schtasks.exe to create or modify Windows Scheduled Tasks, which may be abused for persistence or execution.
+references:
+    - https://attack.mitre.org/techniques/T1053/005/
+    - https://www.atomicredteam.io/docs/atomics/T1053.005
+author: Saksham Bhattarai
+date: 2026-09-25
+tags:
+    - attack.execution
+    - attack.persistence
+    - attack.privilege-escalation
+    - attack.t1053.005
+logsource:
+    product: windows
+    category: process_creation
+detection:
+    selection_image:
+        Image|endswith: '\schtasks.exe'
+    selection_create:
+        CommandLine|contains:
+            - ' /create'
+            - ' /change'
+    condition: selection_image and selection_create
+falsepositives:
+    - Legitimate system administrators creating or modifying scheduled tasks
+level: medium

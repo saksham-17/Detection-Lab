@@ -1,0 +1,38 @@
+title: PowerShell Create or Modify Scheduled Task
+id: bfe7892c-21e7-486f-b1e2-b2bbd772cfc5
+status: test
+description: Adversaries may abuse the Windows Task Scheduler through PowerShell to create, modify, enable, or register scheduled tasks for initial or recurring execution of malicious code.
+references:
+    - https://www.atomicredteam.io/docs/atomics/T1053.005
+    - https://attack.mitre.org/techniques/T1053/005/
+author: Saksham Bhattarai
+date: 2026-09-25
+tags:
+    - attack.privilege-escalation
+    - attack.execution
+    - attack.persistence
+    - attack.t1053.005
+logsource:
+    product: windows
+    category: ps_script
+    definition: 'Requirements: Script Block Logging must be enabled'
+detection:
+    selection_cmdlet:
+        ScriptBlockText|contains:
+            - 'New-ScheduledTaskAction'
+            - 'New-ScheduledTaskTrigger'
+            - 'New-ScheduledTaskPrincipal'
+            - 'New-ScheduledTaskSettingsSet'
+            - 'New-ScheduledTask'
+            - 'Register-ScheduledTask'
+            - 'Set-ScheduledTask'
+            - 'Enable-ScheduledTask'
+    selection_cimmethod:
+        ScriptBlockText|contains|all:
+            - 'Invoke-CimMethod'
+            - 'PS_ScheduledTask'
+            - 'Root\Microsoft\Windows\TaskScheduler'
+    condition: 1 of selection_*
+falsepositives:
+    - Legitimate administrative use of PowerShell Scheduled Task cmdlets
+level: medium

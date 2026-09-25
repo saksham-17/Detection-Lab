@@ -1,0 +1,25 @@
+title: Scheduled Task Updated
+id: 44afacac-eee5-49b4-848f-ae4ea730fefd
+status: experimental
+description: |
+    Detects modification of an existing scheduled task via Windows Security
+    auditing (Event ID 4702).
+references:
+    - https://attack.mitre.org/techniques/T1053/005/
+    - https://www.atomicredteam.io/docs/atomics/T1053.005
+author: Saksham Bhattarai
+date: 2026-09-25
+tags:
+    - attack.persistence
+    - attack.privilege_escalation
+    - attack.t1053.005
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4702
+    condition: selection
+falsepositives:
+    - Legitimate software updates and administrative task modification (very common; expect high volume without additional filtering)
+level: low
