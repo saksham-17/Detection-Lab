@@ -1,0 +1,26 @@
+title: IFEO GlobalFlag Set for lsass.exe — Silent Process Exit Setup
+id: e2b8a3f1-4c7d-4e9b-6f0a-1d5e8c3b2a4f
+status: stable
+description: >
+    Detects a registry value write to the GlobalFlag entry under
+    Image File Execution Options\lsass.exe. This is the setup step for the Silent
+    Process Exit credential dumping technique.
+references:
+    - https://attack.mitre.org/techniques/T1003/001/
+    - https://www.atomicredteam.io/docs/atomics/T1003.001#atomic-test-14-dump-lsassexe-memory-through-silent-process-exit
+author: Saksham Bhattarai
+date: 2026-09-26
+tags:
+    - attack.credential_access
+    - attack.t1003.001
+    - attack.defense_evasion
+logsource:
+    category: registry_set
+    product: windows
+detection:
+    selection:
+        TargetObject|endswith: '\Image File Execution Options\lsass.exe\GlobalFlag'
+    condition: selection
+falsepositives:
+    - None — IFEO\lsass.exe\GlobalFlag does not exist in any clean Windows installation
+level: critical

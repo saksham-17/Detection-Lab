@@ -1,0 +1,32 @@
+title: Rundll32 Invokes comsvcs.dll MiniDump to Dump LSASS
+id: b3e9d4c2-5f8a-4b02-9c7e-2d6f9a4b5e85
+status: stable
+description: >
+    Detects rundll32.exe loading comsvcs.dll and calling its MiniDump export to
+    create a memory dump of lsass.exe. This is a living-off-the-land credential
+    dumping technique (T1003.001) that uses only built-in Windows binaries, leaving
+    no third-party tool on disk. 
+references:
+    - https://attack.mitre.org/techniques/T1003/001/
+    - https://www.atomicredteam.io/docs/atomics/T1003.001#atomic-test-2-dump-lsassexe-memory-using-comsvcsdll
+author: Saksham Bhattarai
+date: 2026-09-26
+tags:
+    - attack.credential_access
+    - attack.t1003.001
+    - attack.defense_evasion
+    - attack.t1218.011
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_image:
+        Image|endswith: '\rundll32.exe'
+    selection_library:
+        CommandLine|contains: 'comsvcs.dll'
+    selection_export:
+        CommandLine|contains: 'MiniDump'
+    condition: selection_image and selection_library and selection_export
+falsepositives:
+    - None — the combination of rundll32.exe + comsvcs.dll + MiniDump has no legitimate use in any production environment
+level: critical

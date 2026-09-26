@@ -1,0 +1,28 @@
+title: WerFault.exe Opens Process Handle to LSASS — Silent Process Exit Execution
+id: a4d0c5b3-6e9f-4a1d-8b2c-3f7a0e5d4c6b
+status: stable
+description: >
+    Detects WerFault.exe opening a handle to lsass.exe via Sysmon process access
+    (EID 10). This is the dump-execution step of the Silent Process Exit technique: 
+    after IFEO\lsass.exe\GlobalFlag is configured, WerFault is triggered by the OS 
+    to create the dump.
+references:
+    - https://attack.mitre.org/techniques/T1003/001/
+    - https://www.atomicredteam.io/docs/atomics/T1003.001#atomic-test-14-dump-lsassexe-memory-through-silent-process-exit
+author: Saksham Bhattarai
+date: 2026-09-26
+tags:
+    - attack.credential_access
+    - attack.t1003.001
+    - attack.defense_evasion
+logsource:
+    category: process_access
+    product: windows
+detection:
+    selection:
+        SourceImage|endswith: '\WerFault.exe'
+        TargetImage|endswith: '\lsass.exe'
+    condition: selection
+falsepositives:
+    - None — WerFault.exe opening a handle to lsass.exe has no legitimate explanation
+level: critical

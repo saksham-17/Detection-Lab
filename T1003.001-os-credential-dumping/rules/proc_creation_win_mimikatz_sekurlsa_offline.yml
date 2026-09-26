@@ -1,0 +1,29 @@
+title: Mimikatz sekurlsa Offline LSASS Credential Extraction — Process Creation
+id: f7c3b8a6-9d2e-4f46-1a5c-6b0d3e8f9c29
+status: stable
+description: >
+    Detects mimikatz.exe being launched with sekurlsa::minidump or
+    sekurlsa::logonpasswords in the CommandLine, the exact invocation used for
+    offline credential extraction from a previously captured LSASS dump.
+references:
+    - https://attack.mitre.org/techniques/T1003/001/
+    - https://www.atomicredteam.io/docs/atomics/T1003.001#atomic-test-6-offline-credential-theft-with-mimikatz
+author: Saksham Bhattarai
+date: 2026-09-26
+tags:
+    - attack.credential_access
+    - attack.t1003.001
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_image:
+        Image|endswith: '\mimikatz.exe'
+    selection_cmd:
+        CommandLine|contains:
+            - 'sekurlsa::minidump'
+            - 'sekurlsa::logonpasswords'
+    condition: selection_image and selection_cmd
+falsepositives:
+    - None — mimikatz.exe invoking sekurlsa modules has no legitimate use
+level: critical
